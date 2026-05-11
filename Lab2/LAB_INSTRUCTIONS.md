@@ -1,46 +1,199 @@
-# Lab4: Small Office LAN Design
+# Lab2:  Router Interface Configuration
 
-## OVERVIEW
-Connect two separate subnets through a router and achieve inter-subnet routing.
-## TOPOLOGY
-```
-         [Router]
-          /    \
-    Gi0/0        Gi0/1
-      |            |
-    [SW1]        [SW2]
-      |            |
-    [PC1]        [PC2]
-```
+## 📌 Overview
+This lab demonstrates how to connect two separate networks using a Cisco router and configure inter-subnet routing. Devices on different subnets will communicate through the router interfaces acting as default gateways.
 
-
-
-## OBJECTIVES
-1. **Initialize Workspace:** Add 1 router (1941), 2 switches, and 2 PCs.
-2. **Cabling:** Connect PC1 to the Switch, then the Switch to the Router Gi0/0 interface.
-3. **Addressing:** Connect PC2 to the Switch, then the Switch to the Router Gi0/1.
-    * **PC1** → `192.168.1.10/24`
-    * **PC2** → `192.168.2.10/24`
-    * **Router Gi0/0** → 192.168.1.1/24
-    * **Router Gi0/1** → 192.168.2.1/24
-    **Bring both interfaces up with no shutdown**
-4. **Testing:** Ping both PCs to each other and also ping the default gateways.
-5. **Verification:** Confirm 4 successful replies with 0% packet loss when pinging each divice.
 ---
 
-## CLI HINTS
-```
-R0# configure terminal
-R0(config)# interface gi0/0
-R0(config-if)# ip address 192.168.1.1 255.255.255.0
-R0(config-if)# no shutdown
-Repeat for Gi0/1. Set default gateways on PCs to router IPs.
+## Topology
+``text
+PC1 ── SW ── Router Gi0/0
+                     |
+                     |
+                  Router Gi0/1 ── SW1 ── PC2
 ```
 
-## KEY SKILLS
-* Router CLI
-* Interface config
-* Default gateway
+---
+
+## Objectives
+
+- Add 1 router, 2 switches, and 2 PCs
+- Configure separate IPv4 subnets
+- Connect networks through a router
+- Configure router interfaces using Cisco IOS CLI
+- Enable routing between subnets
+- Verify connectivity using `ping`
+
+---
+
+# Network Addressing Plan
+
+| Device | Interface          | IP Address   | Subnet Mask   | Default Gateway  |
+|--------|--------------------|------------- |---------------|------------------|
+| PC1    | FastEthernet0      | 192.168.1.10 | 255.255.255.0 | 192.168.1.1      |
+| Router | GigabitEthernet0/0 | 192.168.1.1  | 255.255.255.0 | N/A              |
+| Router | GigabitEthernet0/1 | 192.168.2.1  | 255.255.255.0 | N/A              |
+| PC2    | FastEthernet0      | 192.168.2.10 | 255.255.255.0 | 192.168.2.1      |
+
+---
+
+# Step-by-Step Instructions
+
+## 1️⃣ Add Devices
+
+- 🖥️ 2 PCs
+- 🔀 2 Cisco 2960 Switches
+- 📡 1 Cisco 1941 Router
+
+---
+
+## 2️⃣ Connect Devices
+
+Use **Copper Straight-Through** cables.
+
+| From    | To                    |
+|---------|-----------------------|
+| PC0     | Switch0               |
+| Switch0 | R0 GigabitEthernet0/0 |
+| PC1     | Switch1               |
+| Switch1 | R0 GigabitEthernet0/1 |
+
+---
+
+## 3️⃣ Configure PC IP Addresses
+
+### PC0
+
+```text
+IP Address: 192.168.1.10
+Subnet Mask: 255.255.255.0
+Default Gateway: 192.168.1.1
+```
+
+### PC1
+
+```text
+IP Address: 192.168.2.10
+Subnet Mask: 255.255.255.0
+Default Gateway: 192.168.2.1
+```
+---
+
+#  Router Configuration
+
+Enter the following commands on the router CLI:
+
+```bash
+enable
+configure terminal
+
+interface gigabitEthernet0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+
+interface gigabitEthernet0/1
+ip address 192.168.2.1 255.255.255.0
+no shutdown
+exit
+```
+
+---
+
+# Connectivity Test
+
+On PC0:
+
+```text
+Desktop → Command Prompt
+```
+
+Run:
+
+```bash
+ping 192.168.2.10
+```
+
+---
+
+## Expected Result
+
+```text
+Reply from 192.168.2.10: bytes=32 time<1ms TTL=127
+Reply from 192.168.2.10: bytes=32 time<1ms TTL=127
+Reply from 192.168.2.10: bytes=32 time<1ms TTL=127
+Reply from 192.168.2.10: bytes=32 time<1ms TTL=127
+
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+```
+
+---
+
+# Useful CLI Commands
+
+## View Interface Status
+
+```bash
+show ip interface brief
+```
+
+## View Running Configuration
+
+```bash
+show running-config
+```
+
+## Verify Routing Table
+
+```bash
+show ip route
+```
+
+---
+
+#  Key Skills Learned
+
+- Router CLI Configuration
+- Interface Configuration
+- IPv4 Addressing
+- Default Gateway Configuration
+- Inter-Subnet Routing
+
+---
+
+# Troubleshooting Tips
+
+If the ping fails:
+
+- Verify router interfaces are enabled using `no shutdown`
+- Check PC default gateways
+- Ensure IP addresses are configured correctly
+- Confirm cables are connected properly
+- Verify both PCs are in different subnets
+
+---
+
+# Technologies Used
+
+- Cisco 1941 Router
+- Cisco 2960 Switch
+- IPv4 Networking
+- Inter-Subnet Routing
+
+---
+
+# Suggested Screenshots
+
+Include screenshots of:
+
+- Completed topology
+- Router CLI configuration
+- Successful ping results
+- `show ip interface brief` output
+
+---
 
 > [!TIP]
-> **PRO TIP:** Set each PC's default gateway to the router IP on its subnet or pings won't return.
+> Each PC must use the router interface on its subnet as the default gateway or return traffic will fail.
+
+---
