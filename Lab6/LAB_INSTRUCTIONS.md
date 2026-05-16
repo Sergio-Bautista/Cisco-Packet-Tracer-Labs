@@ -240,13 +240,15 @@ If devices cannot communicate:
 
 ---
 
+---
 > [!TIP]
 > VLANs isolate broadcast domains on a switch. Without a router or Layer 3 switch, devices in different VLANs cannot communicate.
-> Use this command to assign 
+> ```bash
 > SW(config)# vlan 10
 > SW(config-vlan)# name Accounting
 > SW(config)# interface fa0/1
 > SW(config-if)# switchport mode access
 > SW(config-if)# switchport access vlan 10
-> Use show vlan brief to confirm assignments.
+> show vlan brief
+> ```
 ---
